@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.Gastos.controll.entities.Category;
 import com.Gastos.controll.entities.Expense;
 import com.Gastos.controll.repository.ExpenseRepository;
 
@@ -25,6 +26,16 @@ public class ExpenseService {
 	
 	public Double totalExpense() {
 		List<Expense> expenses = findAll();
+		Double total = 0.00;
+		for(Expense e: expenses){
+			total += e.getAmount();
+		}
+		
+		return total;
+	}
+	
+	public Double totalByCategory(Category obj) {
+		List<Expense> expenses = findAll().stream().filter(p -> p.getCategory().equals(obj)).toList();
 		Double total = 0.00;
 		for(Expense e: expenses){
 			total += e.getAmount();
