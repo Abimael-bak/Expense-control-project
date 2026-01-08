@@ -23,5 +23,13 @@ public class ExpenseService {
 		return expenseRepository.save(obj);
 	}
 	
-	
+	public Double totalExpense() {
+		List<Expense> expenses = findAll();
+		Double total = 0.00;
+		for(Expense e: expenses){
+			total += e.getAmount();
+		}
+		
+		return total;
+	}
 }
