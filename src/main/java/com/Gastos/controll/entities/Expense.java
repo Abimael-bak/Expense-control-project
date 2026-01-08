@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 
@@ -23,15 +25,19 @@ public class Expense implements Serializable {
 	private Double amount;
 	private Date date;
 	
+	@ManyToOne
+	private Category category;
+	
 	public Expense() {
 		
 	}
 
-	public Expense(Long id, String description, Double amount, Date date) {
+	public Expense(Long id, String description, Double amount, Date date, Category category) {
 		this.id = id;
 		this.description = description;
 		this.amount = amount;
 		this.date = date;
+		this.category = category;
 	}
 
 	public Long getId() {
@@ -64,6 +70,14 @@ public class Expense implements Serializable {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 	
 	
