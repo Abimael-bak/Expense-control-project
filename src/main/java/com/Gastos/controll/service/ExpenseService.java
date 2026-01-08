@@ -18,4 +18,10 @@ public class ExpenseService {
 	public List<Expense> findAll(){
 		return expenseRepository.findAll();
 	}
+	
+	public Expense insert(Expense obj) {
+		return expenseRepository.save(obj);
+	}
+	
+	
 }
