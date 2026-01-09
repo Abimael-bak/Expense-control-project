@@ -56,4 +56,21 @@ public class ExpenseService {
 		return expense.orElseThrow();
 		
 	}
+	
+	public Expense update(Expense obj, Long id) {
+		Expense expense = findById(id);
+		if(expense != null) {
+			updateDate(obj, expense);
+			return expenseRepository.save(expense);
+		}else {
+			throw new RuntimeException();
+		}
+	}
+	
+	public void updateDate(Expense obj, Expense expense) {
+		expense.setDescription(obj.getDescription());
+		expense.setDate(obj.getDate());
+		expense.setAmount(obj.getAmount());
+		expense.setCategory(obj.getCategory());
+	}
 }
