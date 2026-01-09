@@ -1,6 +1,7 @@
 package com.Gastos.controll.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,11 @@ public class ExpenseService {
 		 List<Expense> expenses = findAll().stream().filter(p -> p.getAmount()> value).toList();
 		 return expenses;
 		 
+	}
+	
+	public Expense findById(Long id) {
+		Optional<Expense> expense = expenseRepository.findById(id);
+		return expense.orElseThrow();
+		
 	}
 }
