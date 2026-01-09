@@ -73,4 +73,13 @@ public class ExpenseService {
 		expense.setAmount(obj.getAmount());
 		expense.setCategory(obj.getCategory());
 	}
+	
+	public void delete(Long id) {
+		Expense expense = findById(id);
+		if(expense != null) {
+			expenseRepository.delete(expense);
+	    }else {
+	    	throw new RuntimeException();
+	    }
+     }
 }
