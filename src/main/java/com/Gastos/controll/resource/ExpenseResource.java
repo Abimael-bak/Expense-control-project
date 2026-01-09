@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.Gastos.controll.entities.Category;
 import com.Gastos.controll.entities.Expense;
 import com.Gastos.controll.service.ExpenseService;
 
@@ -58,4 +59,11 @@ public class ExpenseResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+    @GetMapping(value = "/total")
+    public ResponseEntity<Double> totalExpense(){
+    	Double total = expenseService.totalExpense();
+    	return ResponseEntity.ok().body(total);
+    }
+    
+    
 }
