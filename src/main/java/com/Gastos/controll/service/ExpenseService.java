@@ -43,4 +43,10 @@ public class ExpenseService {
 		
 		return total;
 	}
+	
+	public List<Expense> findByValue(Double value){
+		 List<Expense> expenses = findAll().stream().filter(p -> p.getAmount()> value).toList();
+		 return expenses;
+		 
+	}
 }
