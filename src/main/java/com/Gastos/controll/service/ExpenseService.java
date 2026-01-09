@@ -66,7 +66,7 @@ public class ExpenseService {
 	
 	public void updateDate(Expense obj, Expense expense) {
 		expense.setDescription(obj.getDescription());
-		expense.setDate(obj.getDate());
+		expense.setInstant(obj.getInstant());
 		expense.setAmount(obj.getAmount());
 		expense.setCategory(obj.getCategory());
 	}

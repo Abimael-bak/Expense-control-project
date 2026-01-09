@@ -1,14 +1,15 @@
 package com.Gastos.controll.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 
@@ -23,7 +24,8 @@ public class Expense implements Serializable {
 	private Long id;
 	private String description;
 	private Double amount;
-	private Date date;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",timezone = "GMT")
+	private Instant moment;
 	
 	@ManyToOne
 	private Category category;
@@ -32,11 +34,11 @@ public class Expense implements Serializable {
 		
 	}
 
-	public Expense(Long id, String description, Double amount, Date date, Category category) {
+	public Expense(Long id, String description, Double amount, Instant moment, Category category) {
 		this.id = id;
 		this.description = description;
 		this.amount = amount;
-		this.date = date;
+		this.moment = moment;
 		this.category = category;
 	}
 
@@ -64,12 +66,12 @@ public class Expense implements Serializable {
 		this.amount = amount;
 	}
 
-	public Date getDate() {
-		return date;
+	public Instant getInstant() {
+		return moment;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setInstant(Instant moment) {
+		this.moment = moment;
 	}
 
 	public Category getCategory() {
