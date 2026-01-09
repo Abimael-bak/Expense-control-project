@@ -65,5 +65,8 @@ public class ExpenseResource {
     	return ResponseEntity.ok().body(total);
     }
     
-    
+    @GetMapping(value = "/category/{id}") 
+    public ResponseEntity<Double> totalByCategory(@PathVariable Long id){ 
+    	Double total = expenseService.totalByCategory(id);
+    	return ResponseEntity.ok().body(total); }
 }

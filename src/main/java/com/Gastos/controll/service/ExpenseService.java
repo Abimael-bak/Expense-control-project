@@ -35,8 +35,8 @@ public class ExpenseService {
 		return total;
 	}
 	
-	public Double totalByCategory(Category obj) {
-		List<Expense> expenses = findAll().stream().filter(p -> p.getCategory().equals(obj)).toList();
+	public Double totalByCategory(Long id) {
+		List<Expense> expenses = findAll().stream().filter(p -> p.getCategory().getId().equals(id)).toList();
 		Double total = 0.00;
 		for(Expense e: expenses){
 			total += e.getAmount();
