@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.Gastos.controll.entities.Category;
 import com.Gastos.controll.entities.Expense;
 import com.Gastos.controll.service.ExpenseService;
 
@@ -69,4 +69,12 @@ public class ExpenseResource {
     public ResponseEntity<Double> totalByCategory(@PathVariable Long id){ 
     	Double total = expenseService.totalByCategory(id);
     	return ResponseEntity.ok().body(total); }
+    
+    @GetMapping(value = "/value")
+    public ResponseEntity<List<Expense>> findByValue(@RequestParam Double value) {
+        List<Expense> expenses = expenseService.findByValue(value);
+        return ResponseEntity.ok(expenses);
+    }
 }
+
+

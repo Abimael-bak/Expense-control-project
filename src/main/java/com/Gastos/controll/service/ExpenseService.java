@@ -2,11 +2,8 @@ package com.Gastos.controll.service;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.Gastos.controll.entities.Category;
 import com.Gastos.controll.entities.Expense;
 import com.Gastos.controll.repository.ExpenseRepository;
 
