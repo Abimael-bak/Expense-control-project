@@ -70,11 +70,11 @@ public class Expense implements Serializable {
 		this.amount = amount;
 	}
 
-	public Instant getInstant() {
+	public Instant getMoment() {
 		return moment;
 	}
 
-	public void setInstant(Instant moment) {
+	public void setMoment(Instant moment) {
 		this.moment = moment;
 	}
 

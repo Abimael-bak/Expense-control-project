@@ -2,13 +2,18 @@ package com.Gastos.controll.service;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+
+import com.Gastos.controll.entities.Category;
 import com.Gastos.controll.entities.Expense;
 import com.Gastos.controll.repository.CategoryRepository;
 import com.Gastos.controll.repository.ExpenseRepository;
-
-import com.Gastos.controll.entities.Category;
+import com.Gastos.controll.resource.Exception.DataBaseException;
+import com.Gastos.controll.service.Exception.ResourceNotFoundException;
 
 @Service
 public class ExpenseService {
@@ -76,33 +81,45 @@ public class ExpenseService {
 	
 	public Expense findById(Long id) {
 		Optional<Expense> expense = expenseRepository.findById(id);
-		return expense.orElseThrow();
+		return expense.orElseThrow(()-> new ResourceNotFoundException(id));
 		
 	}
 	
 	public Expense update(Expense obj, Long id) {
-		Expense expense = findById(id);
-		if(expense != null) {
-			updateDate(obj, expense);
-			return expenseRepository.save(expense);
-		}else {
-			throw new RuntimeException();
+		
+	  try {
+			Expense expense = findById(id);
+			if(expense != null) {
+				updateDate(obj, expense);
+				return expenseRepository.save(expense);
+			}else {
+				throw new  ResourceNotFoundException(id);
+			}
+	  }catch(RuntimeException e){
+			throw new ResourceNotFoundException(id);
 		}
 	}
 	
 	public void updateDate(Expense obj, Expense expense) {
 		expense.setDescription(obj.getDescription());
-		expense.setInstant(obj.getInstant());
+		expense.setMoment(obj.getMoment());
 		expense.setAmount(obj.getAmount());
 		expense.setCategory(obj.getCategory());
 	}
 	
 	public void delete(Long id) {
+		
+	try {	
 		Expense expense = findById(id);
 		if(expense != null) {
 			expenseRepository.delete(expense);
 	    }else {
-	    	throw new RuntimeException();
+	    	throw new ResourceNotFoundException(id);
 	    }
+	}catch(EmptyResultDataAccessException e) {
+		throw new ResourceNotFoundException(id);
+	}catch(DataIntegrityViolationException r) {
+		throw new DataBaseException(r.getMessage());
+	   }
      }
 }
