@@ -5,7 +5,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.Gastos.controll.entities.Expense;
+import com.Gastos.controll.repository.CategoryRepository;
 import com.Gastos.controll.repository.ExpenseRepository;
+
+import com.Gastos.controll.entities.Category;
 
 @Service
 public class ExpenseService {
@@ -13,14 +16,37 @@ public class ExpenseService {
 	@Autowired
 	private ExpenseRepository expenseRepository;
 	
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	public List<Expense> findAll(){
 		return expenseRepository.findAll();
 	}
 	
-	public Expense insert(Expense obj) {
-		return expenseRepository.save(obj);
-	}
+
+    public Expense insert(Expense expense) {
+
+        Category category = expense.getCategory();
+
+        if (category != null && category.getName() != null) {
+
+            Category existingCategory = categoryRepository
+                    .findByName(category.getName())
+                    .orElse(null);
+
+            if (existingCategory == null) {
+                Category newCategory = new Category();
+                newCategory.setName(category.getName());
+                category = categoryRepository.save(newCategory);
+            } else {
+                category = existingCategory;
+            }
+
+            expense.setCategory(category);
+        }
+
+        return expenseRepository.save(expense);
+    }
 	
 	public Double totalExpense() {
 		List<Expense> expenses = findAll();

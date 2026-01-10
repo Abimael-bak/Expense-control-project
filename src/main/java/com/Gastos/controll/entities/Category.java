@@ -25,8 +25,9 @@ public class Category implements Serializable{
 	private Long id;
 	private String name;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "category")
-	List<Expense> Expenses = new ArrayList<>();
+	List<Expense> expenses = new ArrayList<>();
 	
 	public Category() {
 		
@@ -54,9 +55,9 @@ public class Category implements Serializable{
 		this.name = name;
 	}
 
-	@JsonIgnore
+
 	public List<Expense> getExpenses() {
-		return Expenses;
+		return expenses;
 	}
 
 	@Override
