@@ -81,30 +81,46 @@ public class ExpenseService {
 	
 	public Expense findById(Long id) {
 		Optional<Expense> expense = expenseRepository.findById(id);
-		return expense.orElseThrow(()-> new ResourceNotFoundException(id));
+		return expense.orElseThrow(()-> new ResourceNotFoundException("Resource not found. id"+ id));
 		
 	}
 	
 	public Expense update(Expense obj, Long id) {
-		
-	  try {
-			Expense expense = findById(id);
-			if(expense != null) {
-				updateDate(obj, expense);
-				return expenseRepository.save(expense);
-			}else {
-				throw new  ResourceNotFoundException(id);
-			}
-	  }catch(RuntimeException e){
-			throw new ResourceNotFoundException(id);
-		}
+
+	    Expense expense = findById(id); 
+
+	    updateDate(obj, expense);
+
+	    return expenseRepository.save(expense);
 	}
 	
 	public void updateDate(Expense obj, Expense expense) {
-		expense.setDescription(obj.getDescription());
-		expense.setMoment(obj.getMoment());
-		expense.setAmount(obj.getAmount());
-		expense.setCategory(obj.getCategory());
+
+	    expense.setDescription(obj.getDescription());
+	    expense.setMoment(obj.getMoment());
+	    expense.setAmount(obj.getAmount());
+
+	    if (obj.getCategory() != null) {
+
+	        Category category;
+
+	        if (obj.getCategory().getId() != null) {
+	            category = categoryRepository.findById(obj.getCategory().getId())
+	                .orElseThrow(() ->
+	                    new ResourceNotFoundException("Category not found with name:  " + obj.getCategory().getId())
+	                );
+
+	        } else if (obj.getCategory().getName() != null) {
+	            category = categoryRepository.findByName(obj.getCategory().getName())
+	                .orElseThrow(() ->
+	                    new ResourceNotFoundException("Category not found with name: " + obj.getCategory().getName())
+	                );
+	        } else {
+	            throw new RuntimeException("Category inválida");
+	        }
+
+	        expense.setCategory(category);
+	    }
 	}
 	
 	public void delete(Long id) {
@@ -114,10 +130,10 @@ public class ExpenseService {
 		if(expense != null) {
 			expenseRepository.delete(expense);
 	    }else {
-	    	throw new ResourceNotFoundException(id);
+	    	throw new ResourceNotFoundException("Resource not found. Id"+id);
 	    }
 	}catch(EmptyResultDataAccessException e) {
-		throw new ResourceNotFoundException(id);
+		throw new ResourceNotFoundException("Resource not Found. Id"+ id);
 	}catch(DataIntegrityViolationException r) {
 		throw new DataBaseException(r.getMessage());
 	   }

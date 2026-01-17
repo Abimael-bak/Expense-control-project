@@ -27,7 +27,7 @@ public class Expense implements Serializable {
 	private String description;
 	private Double amount;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",timezone = "GMT")
+	
 	private Instant moment;
 	
 	@ManyToOne
