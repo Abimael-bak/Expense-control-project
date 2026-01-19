@@ -67,9 +67,9 @@ public class ExpenseResource {
     }
     
     @GetMapping(value = "/category/{id}") 
-    public ResponseEntity<Double> totalByCategory(@PathVariable Long id){ 
-    	Double total = expenseService.totalByCategory(id);
-    	return ResponseEntity.ok().body(total); }
+    public ResponseEntity<List<Expense>> totalByCategory(@PathVariable Long id){ 
+    	List <Expense> ex = expenseService.totalByCategory(id);
+    	return ResponseEntity.ok().body(ex); }
     
     @GetMapping(value = "/value")
     public ResponseEntity<List<Expense>> findByValue(@RequestParam Double value) {

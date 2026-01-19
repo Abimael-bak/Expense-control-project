@@ -63,14 +63,10 @@ public class ExpenseService {
 		return total;
 	}
 	
-	public Double totalByCategory(Long id) {
+	public List<Expense> totalByCategory(Long id) {
 		List<Expense> expenses = findAll().stream().filter(p -> p.getCategory().getId().equals(id)).toList();
-		Double total = 0.00;
-		for(Expense e: expenses){
-			total += e.getAmount();
-		}
 		
-		return total;
+		return expenses;
 	}
 	
 	public List<Expense> findByValue(Double value){
