@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>expense control</title>
+</head>
+<body>
+    
+    <header class ="header">
+        <h1>Controle de Gastos</h1>
+    </header>
+
+    <main class="container">
+
+        <section class="card">
+            <div class="search-area">
+                <input
+                  type="text"
+                  id="search-input"
+                  placeholder="Buscar por ID, categoria ou >valor"
+                > 
+               <button onclick="searchExpenses()">Buscar</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Despesas</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Valor</th>
+                        <th>Descrição</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="expense-list"></tbody>
+            </table>
+            <a href="insert.html" class="link-button">
+                  + Adicionar Nova Despesa
+            </a>
+        </section>
+
+        <section class="card total-card">
+            <h2>Total R$ <span id="total">0.00</span></h2>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
