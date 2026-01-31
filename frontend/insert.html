@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>New expense</title>
+</head>
+<body>
+    
+     <header class="header">
+        <h1>Controle de Gastos</h1>
+    </header>
+
+    <main class = "container">
+
+        <section class="card">
+            <h2>Nova Despesa</h2>
+
+            <input type="text" id="description" placeholder="Descrição">
+            <input type="number" id="amount" placeholder="Valor">
+            <input type="text" id="category" placeholder="Categoria">
+
+            <button onclick="addExpense()">Adicionar</button>
+        </section>
+
+        <section class="card action-card">
+            <a href="index.html" class="link-button">
+                 Voltar para a lista 
+            </a>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
