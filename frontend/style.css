@@ -1,0 +1,116 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corpo */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+/* Cabeçalho */
+.header {
+    background-color: #1e88e5;
+    padding: 20px;
+    text-align: center;
+    color: white;
+}
+
+/* Container central */
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+/* Cards */
+.card {
+    background-color: white;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Busca */
+.search-area {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Inputs */
+input {
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+    width: 220px;
+}
+
+input:focus {
+    border-color: #1e88e5;
+}
+
+/* Botões */
+button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background-color: #1e88e5;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1565c0;
+}
+
+/* Tabela */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f1f1f1;
+}
+
+/* Total */
+.total-card {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+/* Links como botão */
+.link-button {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #43a047;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.link-button:hover {
+    background-color: #2e7d32;
+}
+
+/* Ações */
+.action-card {
+    text-align: center;
+}
