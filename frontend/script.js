@@ -62,3 +62,49 @@ function loadExpenseById(id){
 function Update(id){
     window.location.href = `insert.html?id=${id}`;
 }
+
+function addExpense(){
+   const description = document.getElementById("description").value.trim();
+   const amount = document.getElementById("amount").value;
+   const category = document.getElementById("category").value.trim();
+
+   if(!description || !(amount) || !category){
+         alert("Por favor, preencha todos os campos.");
+         return;
+   }
+
+   const method = expenseIdToUpdate ? "PUT" : "POST";
+   const url = expenseIdToUpdate ? `${API_URL}/${expenseIdToUpdate}` : API_URL;
+
+   const expense ={
+        description: description,
+        amount: Number(amount),
+        moment: new Date().toISOString(),
+        category: {
+            name: category
+        }
+   }
+
+   fetch(url,{
+        method: method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+   body : JSON.stringify(expense)
+   })
+   .then(response => {
+        if(!response.ok){
+            throw new Error("Erro ao salvar despesa.");
+        }
+        return response.json();
+    })
+    .then(() => {
+        loadExpenses();
+        clearForm();
+        window.location.href = "index.html";
+        expenseIdToUpdate = null;
+   })
+   .catch(error => {
+        alert("Erro ao salvar despesa: " + error.message);
+   });
+}
