@@ -46,3 +46,19 @@ function renderExpense(expenses){
 
     totalSpan.textContent = total.toFixed(2);
 }
+
+function loadExpenseById(id){
+
+    fetch(`${API_URL}/${id}`)
+    .then(response => response.json())
+    then(data =>{
+         document.getElementById("description").value = data.description;
+         document.getElementById("amount").value = data.amount;
+         document.getElementById("category").value = data.category.name;
+         expenseIdToUpdate = data.id;
+    })
+}
+
+function Update(id){
+    window.location.href = `insert.html?id=${id}`;
+}
