@@ -108,3 +108,20 @@ function addExpense(){
         alert("Erro ao salvar despesa: " + error.message);
    });
 }
+
+function Delete(id){
+    fetch(`${API_URL}/${id}`,{
+        method: "DELETE"
+    })
+    .then(response =>{
+        if(!response.ok){
+            throw new Error("Erro ao deletar despesa.");
+        }
+    })
+    .then(() => {
+        loadExpenses();
+   })
+   .catch(error => {
+        alert("Erro ao deletar despesa: " + error.message);
+   });
+}
