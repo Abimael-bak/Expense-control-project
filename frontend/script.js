@@ -51,12 +51,14 @@ function loadExpenseById(id){
 
     fetch(`${API_URL}/${id}`)
     .then(response => response.json())
-    then(data =>{
+    .then(data =>{
          document.getElementById("description").value = data.description;
          document.getElementById("amount").value = data.amount;
          document.getElementById("category").value = data.category.name;
-         expenseIdToUpdate = data.id;
+
+         expenseIdToUpdate =id;
     })
+    .catch(error => console.error("Error fetching expense by ID:", error));
 }
 
 function Update(id){
@@ -100,7 +102,7 @@ function addExpense(){
     })
     .then(() => {
         loadExpenses();
-        clearForm();
+        clearForm()
         window.location.href = "index.html";
         expenseIdToUpdate = null;
    })
@@ -124,4 +126,54 @@ function Delete(id){
    .catch(error => {
         alert("Erro ao deletar despesa: " + error.message);
    });
+}
+
+function searchExpenses(){
+    const inputValue = document.getElementById("search-input").value.toLowerCase();
+
+    if(!inputValue){
+        loadExpenses();
+        return;
+    }
+
+    if(inputValue.startsWith(">")){
+        const amount = inputValue.substring(1).trim();
+
+        fetch(`${API_URL}/value?value=${amount}`)
+        .then(response => response.json())
+        .then(data => renderExpense(data))
+        .catch(error => console.error("Error searching expenses:", error));
+          return;
+    }else if(/^category\/\d+$/.test(inputValue)){
+        const categoryId =inputValue.split("/")[1];
+        fetch(`${API_URL}/category/${categoryId}`)
+        .then(response => response.json())
+        .then(data => renderExpense(data))
+        .catch(error => console.error("Error searching expenses:", error));
+        return ;
+    }else if(!isNaN(inputValue)){
+         fetch(`${API_URL}/${inputValue}`)
+         .then(response => response.json())
+         .then(data => renderExpense([data]))
+         .catch(error => console.error("Error searching expenses:", error));
+         return;
+    }
+
+    fetch(API_URL)
+    .then(response => response.json())
+    .then(data =>{
+        const filtered = data.filter(e => 
+            e.description.toLowerCase().includes(inputValue) ||
+            e.category.name.toLowerCase().includes(inputValue)
+        );
+        renderExpense(filtered);
+    })
+    .catch(error => console.error("Error searching expenses:", error));
+  
+}
+
+function clearForm(){
+    document.getElementById("description").value = "";
+    document.getElementById("amount").value = "";
+    document.getElementById("category").value = "";
 }
