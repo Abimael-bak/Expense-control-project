@@ -1,16 +1,13 @@
 # ---- BUILD STAGE ----
-FROM eclipse-temurin:21-jdk AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Copia apenas o backend
 COPY backend ./backend
 WORKDIR /app/backend
 
-# Dá permissão para executar o Maven Wrapper
-RUN chmod +x mvnw
-
 # Compila sem testes
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 
 # ---- RUNTIME STAGE ----
