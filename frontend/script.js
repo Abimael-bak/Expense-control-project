@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:8080/expenses"
+const API_URL = "https://expense-control-project.onrender.com/expenses";
+
 let expenseIdToUpdate = null;
 
 document.addEventListener("DOMContentLoaded", loadExpenses);
