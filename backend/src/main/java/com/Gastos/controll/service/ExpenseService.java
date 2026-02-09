@@ -25,7 +25,7 @@ public class ExpenseService {
 	private CategoryRepository categoryRepository;
 	
 	public List<Expense> findAll(){
-		return expenseRepository.findAll();
+		return expenseRepository.findAll() ;
 	}
 	
 

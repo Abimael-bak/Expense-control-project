@@ -34,16 +34,23 @@ public class Expense implements Serializable {
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
+	
+	@ManyToOne
+	@JoinColumn(name = "User_id")
+	private User user;
+	
+
 	public Expense() {
 		
 	}
 
-	public Expense(Long id, String description, Double amount, Instant moment, Category category) {
+	public Expense(Long id, String description, Double amount, Instant moment, Category category, User user) {
 		this.id = id;
 		this.description = description;
 		this.amount = amount;
 		this.moment = moment;
 		this.category = category;
+		this.user = user;
 	}
 
 	public Long getId() {
@@ -86,7 +93,14 @@ public class Expense implements Serializable {
 		this.category = category;
 	}
 	
-	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	
 	
 }
