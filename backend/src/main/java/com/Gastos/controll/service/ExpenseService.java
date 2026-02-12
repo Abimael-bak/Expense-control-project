@@ -10,10 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.Gastos.controll.entities.Category;
 import com.Gastos.controll.entities.Expense;
+import com.Gastos.controll.entities.User;
 import com.Gastos.controll.repository.CategoryRepository;
 import com.Gastos.controll.repository.ExpenseRepository;
+import com.Gastos.controll.repository.UserRepository;
 import com.Gastos.controll.resource.Exception.DataBaseException;
 import com.Gastos.controll.service.Exception.ResourceNotFoundException;
+import com.Gastos.controll.service.Exception.UserException;
 
 @Service
 public class ExpenseService {
@@ -24,6 +27,8 @@ public class ExpenseService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 	
+	@Autowired
+	private UserRepository userRepository;
 	public List<Expense> findAll(){
 		return expenseRepository.findAll() ;
 	}
@@ -33,6 +38,22 @@ public class ExpenseService {
 
         Category category = expense.getCategory();
 
+        User user = expense.getUser();
+        
+        if(user != null && user.getName() != null) {
+        	User existingUser = userRepository
+                    .findByName(user.getName())
+                    .orElse(null);
+        	
+        	  if (existingUser == null) {
+                  throw new UserException("Usuario não existe!");
+              } else {
+                  user = existingUser;
+              }
+
+              expense.setUser(user);
+        	
+        }
         if (category != null && category.getName() != null) {
 
             Category existingCategory = categoryRepository

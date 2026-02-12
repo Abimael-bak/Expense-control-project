@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,13 +27,13 @@ public class User implements Serializable {
 	private Long id;
 	private String name;
 	private String email;
-	@JsonIgnore
+	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 	
-	@OneToMany(mappedBy = "user")
-	List<Expense> expenses = new ArrayList<>();
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Expense> expenses = new ArrayList<>();
 	  
-	
 
 	public User() {
 		
@@ -77,7 +78,7 @@ public class User implements Serializable {
         this.password = password;
 	}
 	
-	@JsonIgnore
+	
 	public List<Expense> getExpenses() {
 		return expenses;
 	}

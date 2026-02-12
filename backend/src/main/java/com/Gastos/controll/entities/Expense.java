@@ -3,6 +3,9 @@ package com.Gastos.controll.entities;
 import java.io.Serializable;
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,6 +38,7 @@ public class Expense implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "User_id")
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private User user;
 	
 
