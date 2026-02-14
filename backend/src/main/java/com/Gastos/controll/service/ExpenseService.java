@@ -32,7 +32,6 @@ public class ExpenseService {
 	public List<Expense> findAll(){
 		return expenseRepository.findAll() ;
 	}
-	
 
     public Expense insert(Expense expense) {
 
