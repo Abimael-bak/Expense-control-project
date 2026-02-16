@@ -172,7 +172,7 @@ function Delete(id) {
 //  BUSCA
 // ----------------------
 function searchExpenses() {
-    const inputValue = sanitize(document.getElementById("search-input").value.toLowerCase());
+    const inputValue = (document.getElementById("search-input").value.toLowerCase().trim());
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!inputValue) {
