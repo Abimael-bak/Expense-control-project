@@ -1,36 +1,74 @@
-const API_URL = "https://expense-control-project.onrender.com/expenses";
+const API_URL = "http://localhost:8080/expenses";
 
 let expenseIdToUpdate = null;
 
-document.addEventListener("DOMContentLoaded", loadExpenses);
+// ----------------------
+//  CARREGAMENTO INICIAL
+// ----------------------
 document.addEventListener("DOMContentLoaded", () => {
-    const  params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    if(id){
+
+    if (id) {
         loadExpenseById(id);
     }
 
+    // Só executa na página principal
+    if (document.getElementById("expense-list")) {
+        renderUser();
+    }
 });
 
-function loadExpenses(){
-   fetch(API_URL)
-   .then(response => response.json())
-   .then(data => renderExpense(data))
-   .catch(error => console.error("Error fetching expenses:", error));
+// ----------------------
+//  FUNÇÃO CENTRALIZADA
+//  BUSCA TODAS AS DESPESAS DO USUÁRIO
+// ----------------------
+function loadUserExpenses() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) return;
+
+    fetch(`http://localhost:8080/users/${user.id}/expenses`)
+        .then(response => response.json())
+        .then(expenses => {
+            renderExpense(expenses);
+        })
+        .catch(error => console.error("Erro ao carregar despesas:", error));
 }
 
-function renderExpense(expenses){
-    const tableBody = document.getElementById("expense-list")
+
+// ----------------------
+//  CARREGA O USUÁRIO E AS DESPESAS
+// ----------------------
+function renderUser() {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Agora sempre busca do backend
+    loadUserExpenses();
+}
+
+// ----------------------
+//  RENDERIZAÇÂO DA TABELA
+// ----------------------
+function renderExpense(expenses) {
+    const tableBody = document.getElementById("expense-list");
     const totalSpan = document.getElementById("total");
+
+    if (!tableBody || !totalSpan) return;
 
     tableBody.innerHTML = "";
     let total = 0;
 
     expenses.forEach(e => {
-         
         const date = e.moment.split("T")[0];
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
+            <td>${e.id}</td>
             <td>${e.description}</td>
             <td>${e.amount.toFixed(2)}</td>
             <td>${e.category.name}</td>
@@ -41,140 +79,175 @@ function renderExpense(expenses){
             </td>
         `;
         tableBody.appendChild(tr);
+
         total += e.amount;
-        
     });
 
     totalSpan.textContent = total.toFixed(2);
 }
 
-function loadExpenseById(id){
-
+// ----------------------
+//  CARREGA UMA DESPESA PARA EDIÇÃO
+// ----------------------
+function loadExpenseById(id) {
     fetch(`${API_URL}/${id}`)
-    .then(response => response.json())
-    .then(data =>{
-         document.getElementById("description").value = data.description;
-         document.getElementById("amount").value = data.amount;
-         document.getElementById("category").value = data.category.name;
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("description").value = data.description;
+            document.getElementById("amount").value = data.amount;
+            document.getElementById("category").value = data.category.name;
 
-         expenseIdToUpdate =id;
-    })
-    .catch(error => console.error("Error fetching expense by ID:", error));
+            expenseIdToUpdate = id;
+        })
+        .catch(error => console.error("Erro carregando despesa:", error));
 }
 
-function Update(id){
+// ----------------------
+//  REDIRECIONA PARA PÁGINA DE ATUALIZAÇÃO
+// ----------------------
+function Update(id) {
     window.location.href = `insert.html?id=${id}`;
 }
 
-function addExpense(){
-   const description = document.getElementById("description").value.trim();
-   const amount = document.getElementById("amount").value;
-   const category = document.getElementById("category").value.trim();
+// ----------------------
+//  INSERIR OU ATUALIZAR DESPESA
+// ----------------------
+function addExpense() {
+    const description = sanitize(document.getElementById("description").value.trim());
+    const amount = document.getElementById("amount").value;
+    const category = sanitize(document.getElementById("category").value.trim());
+    const user = JSON.parse(localStorage.getItem("user"));
 
-   if(!description || !(amount) || !category){
-         alert("Por favor, preencha todos os campos.");
-         return;
-   }
-
-   const method = expenseIdToUpdate ? "PUT" : "POST";
-   const url = expenseIdToUpdate ? `${API_URL}/${expenseIdToUpdate}` : API_URL;
-
-   const expense ={
-        description: description,
-        amount: Number(amount),
-        moment: new Date().toISOString(),
-        category: {
-            name: category
-        }
-   }
-
-   fetch(url,{
-        method: method,
-        headers: {
-            "Content-Type": "application/json"
-        },
-   body : JSON.stringify(expense)
-   })
-   .then(response => {
-        if(!response.ok){
-            throw new Error("Erro ao salvar despesa.");
-        }
-        return response.json();
-    })
-    .then(() => {
-        loadExpenses();
-        clearForm()
-        window.location.href = "index.html";
-        expenseIdToUpdate = null;
-   })
-   .catch(error => {
-        alert("Erro ao salvar despesa: " + error.message);
-   });
-}
-
-function Delete(id){
-    fetch(`${API_URL}/${id}`,{
-        method: "DELETE"
-    })
-    .then(response =>{
-        if(!response.ok){
-            throw new Error("Erro ao deletar despesa.");
-        }
-    })
-    .then(() => {
-        loadExpenses();
-   })
-   .catch(error => {
-        alert("Erro ao deletar despesa: " + error.message);
-   });
-}
-
-function searchExpenses(){
-    const inputValue = document.getElementById("search-input").value.toLowerCase();
-
-    if(!inputValue){
-        loadExpenses();
+    if (!description || !amount || !category) {
+        alert("Por favor, preencha todos os campos.");
         return;
     }
 
-    if(inputValue.startsWith(">")){
-        const amount = inputValue.substring(1).trim();
+    const method = expenseIdToUpdate ? "PUT" : "POST";
+    const url = expenseIdToUpdate ? `${API_URL}/${expenseIdToUpdate}` : API_URL;
 
-        fetch(`${API_URL}/value?value=${amount}`)
-        .then(response => response.json())
-        .then(data => renderExpense(data))
-        .catch(error => console.error("Error searching expenses:", error));
-          return;
-    }else if(/^category\/\d+$/.test(inputValue)){
-        const categoryId =inputValue.split("/")[1];
-        fetch(`${API_URL}/category/${categoryId}`)
-        .then(response => response.json())
-        .then(data => renderExpense(data))
-        .catch(error => console.error("Error searching expenses:", error));
-        return ;
-    }else if(!isNaN(inputValue)){
-         fetch(`${API_URL}/${inputValue}`)
-         .then(response => response.json())
-         .then(data => renderExpense([data]))
-         .catch(error => console.error("Error searching expenses:", error));
-         return;
-    }
+    const expense = {
+        description: description,
+        amount: Number(amount),
+        moment: new Date().toISOString(),
+        category: { name: category },
+        user: { name: user.name }   // corrigido!
+    };
 
-    fetch(API_URL)
-    .then(response => response.json())
-    .then(data =>{
-        const filtered = data.filter(e => 
-            e.description.toLowerCase().includes(inputValue) ||
-            e.category.name.toLowerCase().includes(inputValue)
-        );
-        renderExpense(filtered);
+    fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(expense)
     })
-    .catch(error => console.error("Error searching expenses:", error));
-  
+        .then(response => {
+            if (!response.ok) throw new Error("Erro ao salvar despesa.");
+            return response.json();
+        })
+        .then(() => {
+            loadUserExpenses();
+            clearForm();
+
+            window.location.href = "index.html";
+            expenseIdToUpdate = null;
+        })
+        .catch(error => {
+            alert("Erro ao salvar despesa: " + error.message);
+            console.error(error);
+        });
 }
 
-function clearForm(){
+// ----------------------
+//  DELETAR DESPESA
+// ----------------------
+function Delete(id) {
+    fetch(`${API_URL}/${id}`, { method: "DELETE" })
+        .then(response => {
+            if (!response.ok) throw new Error("Erro ao deletar despesa.");
+        })
+        .then(loadUserExpenses)
+        .catch(error => alert("Erro ao deletar despesa: " + error.message));
+}
+
+// ----------------------
+//  BUSCA
+// ----------------------
+function searchExpenses() {
+    const inputValue = sanitize(document.getElementById("search-input").value.toLowerCase());
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!inputValue) {
+        loadUserExpenses();
+        return;
+    }
+
+    // ---- Busca por valor (>100)
+    if (inputValue.startsWith(">")) {
+        const amount = inputValue.substring(1).trim();
+
+        fetch(`http://localhost:8080/users/${user.id}/expenses`)
+            .then(response => response.json())
+            .then(data => {
+                const filtered = data.filter(e => e.amount > Number(amount));
+                renderExpense(filtered);
+            });
+        return;
+    }
+
+    // ---- Busca por categoria (category/2)
+    if (/^category\/\d+$/.test(inputValue)) {
+        const categoryId = inputValue.split("/")[1];
+
+        fetch(`http://localhost:8080/users/${user.id}/expenses`)
+            .then(response => response.json())
+            .then(data => {
+                const filtered = data.filter(e => e.category.id === Number(categoryId));
+                renderExpense(filtered);
+            });
+        return;
+    }
+
+    // ---- Busca por ID
+    if (!isNaN(inputValue)) {
+        fetch(`http://localhost:8080/users/${user.id}/expenses`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(e => {
+                    if (e.id === Number(inputValue)) {
+                        renderExpense([e]);
+                    }
+            });
+        });
+        return;
+    }
+
+    // ---- Busca geral
+    fetch(`http://localhost:8080/users/${user.id}/expenses`)
+        .then(response => response.json())
+        .then(data => {
+            const filtered = data.filter(e =>
+                (e.description.toLowerCase().includes(inputValue) ||
+                    e.category.name.toLowerCase().includes(inputValue))
+            );
+            renderExpense(filtered);
+        });
+}
+
+// ----------------------
+//  LIMPAR FORMULÁRIO
+// ----------------------
+function clearForm() {
     document.getElementById("description").value = "";
     document.getElementById("amount").value = "";
     document.getElementById("category").value = "";
+}
+
+function sanitize(input) {
+    const div = document.createElement("div");
+    div.textContent = input;
+    return div.innerHTML;
+}
+
+function logout() {
+    localStorage.removeItem("user");
+    window.location.replace("login.html"); 
 }

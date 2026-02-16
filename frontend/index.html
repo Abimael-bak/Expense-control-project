@@ -1,10 +1,10 @@
-insert atualizado: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>New expense</title>
+    <title>expense control</title>
 </head>
 <body>
     <script>
@@ -19,29 +19,49 @@ insert atualizado: <!DOCTYPE html>
     };
 </script>
 
-     <header class="header">
+    <header class ="header">
         <h1>Controle de Gastos</h1>
+        <button class="btn-logout" onclick="logout()">Sair</button>
     </header>
 
-    <main class = "container">
+    <main class="container">
 
         <section class="card">
-            <h2>Nova Despesa</h2>
-
-            <input type="text" id="description" placeholder="Descrição">
-            <input type="number" id="amount" placeholder="Valor">
-            <input type="text" id="category" placeholder="Categoria">
-
-            <button onclick="addExpense()">Adicionar</button>
+            <div class="search-area">
+                <input
+                  type="text"
+                  id="search-input"
+                  placeholder="Buscar por ID, categoria ou >valor"
+                > 
+               <button onclick="searchExpenses()">Buscar</button>
+            </div>
         </section>
 
-        <section class="card action-card">
-            <a href="index.html" class="link-button">
-                 Voltar para a lista 
+        <section class="card">
+            <h2>Despesas</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                        <th>Categoria</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="expense-list"></tbody>
+            </table>
+            <a href="insert.html" class="link-button">
+                  + Adicionar Nova Despesa
             </a>
         </section>
-    </main>
 
+        <section class="card total-card">
+            <h2>Total R$ <span id="total">0.00</span></h2>
+        </section>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>

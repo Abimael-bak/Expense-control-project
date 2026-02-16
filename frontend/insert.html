@@ -7,7 +7,18 @@
     <title>New expense</title>
 </head>
 <body>
-    
+    <script>
+    // Impede voltar após logout ou sem login
+    if (!localStorage.getItem("user")) {
+        window.location.replace("login.html");
+    }
+
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
+        window.history.pushState(null, "", window.location.href);
+    };
+</script>
+
      <header class="header">
         <h1>Controle de Gastos</h1>
     </header>
