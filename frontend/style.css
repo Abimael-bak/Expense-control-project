@@ -114,3 +114,10 @@ th {
 .action-card {
     text-align: center;
 }
+
+.btn-logout{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #383248;
+}

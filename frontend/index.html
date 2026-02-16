@@ -1,54 +1,47 @@
-<!DOCTYPE html>
+insert atualizado: <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>expense control</title>
+    <title>New expense</title>
 </head>
 <body>
-    
-    <header class ="header">
+    <script>
+    // Impede voltar após logout ou sem login
+    if (!localStorage.getItem("user")) {
+        window.location.replace("login.html");
+    }
+
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
+        window.history.pushState(null, "", window.location.href);
+    };
+</script>
+
+     <header class="header">
         <h1>Controle de Gastos</h1>
     </header>
 
-    <main class="container">
+    <main class = "container">
 
         <section class="card">
-            <div class="search-area">
-                <input
-                  type="text"
-                  id="search-input"
-                  placeholder="Buscar por ID, categoria ou >valor"
-                > 
-               <button onclick="searchExpenses()">Buscar</button>
-            </div>
+            <h2>Nova Despesa</h2>
+
+            <input type="text" id="description" placeholder="Descrição">
+            <input type="number" id="amount" placeholder="Valor">
+            <input type="text" id="category" placeholder="Categoria">
+
+            <button onclick="addExpense()">Adicionar</button>
         </section>
 
-        <section class="card">
-            <h2>Despesas</h2>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Categoria</th>
-                        <th>Valor</th>
-                        <th>Descrição</th>
-                        <th>Data</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="expense-list"></tbody>
-            </table>
-            <a href="insert.html" class="link-button">
-                  + Adicionar Nova Despesa
+        <section class="card action-card">
+            <a href="index.html" class="link-button">
+                 Voltar para a lista 
             </a>
         </section>
-
-        <section class="card total-card">
-            <h2>Total R$ <span id="total">0.00</span></h2>
-        </section>
     </main>
+
     <script src="script.js"></script>
 </body>
 </html>
