@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Expense Controll</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <h1>Expense Controll</h1>
+        <h3>Faça login para continuar</h3>
+
+        
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" type="email" placeholder="Digite seu email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input id="password" type="password" placeholder="Digite sua senha" required>
+            </div>
+
+            <button class="btn-login" type="button" onclick="login()">Entrar</button>
+
+            <p>
+                <a href="cadastro.html">Novo usuário</a>
+            </p>
+
+            <p id="error" class="error"></p>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>
