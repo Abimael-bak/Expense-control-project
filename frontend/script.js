@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/expenses";
+const API_URL = "https://expense-control-project.onrender.com/expenses";
 
 let expenseIdToUpdate = null;
 
@@ -27,7 +27,7 @@ function loadUserExpenses() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) return;
 
-    fetch(`http://localhost:8080/users/${user.id}/expenses`)
+    fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
         .then(response => response.json())
         .then(expenses => {
             renderExpense(expenses);
@@ -184,7 +184,7 @@ function searchExpenses() {
     if (inputValue.startsWith(">")) {
         const amount = inputValue.substring(1).trim();
 
-        fetch(`http://localhost:8080/users/${user.id}/expenses`)
+        fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
             .then(response => response.json())
             .then(data => {
                 const filtered = data.filter(e => e.amount > Number(amount));
@@ -197,7 +197,7 @@ function searchExpenses() {
     if (/^category\/\d+$/.test(inputValue)) {
         const categoryId = inputValue.split("/")[1];
 
-        fetch(`http://localhost:8080/users/${user.id}/expenses`)
+        fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
             .then(response => response.json())
             .then(data => {
                 const filtered = data.filter(e => e.category.id === Number(categoryId));
@@ -208,7 +208,7 @@ function searchExpenses() {
 
     // ---- Busca por ID
     if (!isNaN(inputValue)) {
-        fetch(`http://localhost:8080/users/${user.id}/expenses`)
+        fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
             .then(response => response.json())
             .then(data => {
                 data.forEach(e => {
@@ -221,7 +221,7 @@ function searchExpenses() {
     }
 
     // ---- Busca geral
-    fetch(`http://localhost:8080/users/${user.id}/expenses`)
+    fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
         .then(response => response.json())
         .then(data => {
             const filtered = data.filter(e =>
