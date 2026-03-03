@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Gastos.controll.entities.Category;
+import com.Gastos.controll.entities.DTO.CategoryResponse;
 import com.Gastos.controll.service.CategoryService;
 
 @RestController
@@ -26,8 +27,9 @@ public class CategoryResource {
 	}
 	
 	@GetMapping(value ="/{id}")
-	public ResponseEntity<Category> findById(@PathVariable Long id){
-		Category obj = categoryService.findById(id);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<CategoryResponse> findById(@PathVariable Long id){
+		var obj = categoryService.findById(id);
+		
+		return ResponseEntity.ok().body(new CategoryResponse(obj.getId(), obj.getName()));
 	}
 }

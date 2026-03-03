@@ -72,7 +72,7 @@ public class ExpenseResource {
 		 
     	
     	var newEx = expenseService.update(ex, id);
-    	return ResponseEntity.ok().body(new ExpenseResponse(newEx.getId(), newEx.getDescription(), newEx.getAmount(), newEx.getMoment(), newEx.getCategory());
+    	return ResponseEntity.ok().body(new ExpenseResponse(newEx.getId(), newEx.getDescription(), newEx.getAmount(), newEx.getMoment(), newEx.getCategory()));
     }
     
     @DeleteMapping(value = "/{id}")
