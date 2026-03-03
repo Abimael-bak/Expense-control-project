@@ -47,44 +47,62 @@ public class UserResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<User> insert(@RequestBody  User obj){
-		User user = userService.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(user.getId()).toUri();
+	public ResponseEntity<Void> insert(@RequestBody  UserRequest Dto){
+		User user = new User();
+		user.setName(Dto.name());
+		user.setEmail(Dto.email());
+		user.setPassword(Dto.Password());
 		
-		return ResponseEntity.created(uri).body(user);
+		var obj = userService.insert(user);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+		
+		return ResponseEntity.created(uri).build();
 	}
 	
 	@GetMapping("/{id}/expenses")
-	public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable Long id) {
-	    Optional<User> user = userRepository.findById(id);
+	public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable UserRequest Dto) {
+	    Optional<User> user = userRepository.findById(Dto.id());
 	    if (!user.isPresent()) {
 	        return ResponseEntity.notFound().build();
 	    }
-
-	    return ResponseEntity.ok(user.get().getExpenses());
+	     
+	    UserResponse DTO = new UserResponse(
+	    		user.get().getId(),
+	    		user.get().getName(),
+	    		user.get().getEmail(),
+	    		user.get().getExpenses()
+	    		);
+	     
+	    return ResponseEntity.ok(DTO.expenses());
 	}
 
 	@PostMapping(value = "/login")
-	public ResponseEntity<User> login(@RequestBody Map<String,String> body){
-		String email = body.get("email");
-		String password = body.get("password");
+	public ResponseEntity<UserResponse> login(@RequestBody UserRequest Dto){
+		String email = Dto.email();
+		String password = Dto.Password();
 		
 		User user = userService.login(email, password);
 		
 		
-		return ResponseEntity.ok().body(user); 
+		return ResponseEntity.ok().body(new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getExpenses())); 
 	}
 	
 	@PutMapping(value = "/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj){
-    	User user = userService.update(id, obj);
-    	return ResponseEntity.ok().body(user);
+    public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody UserRequest Dto){
+    	User user = new User();
+    			user.setName(Dto.name());
+    			user.setEmail(Dto.email());
+    			user.setPassword(Dto.Password());
+    			
+    		var obj = userService.update(id, user );
+    		
+    	return ResponseEntity.ok().body(new UserResponse(obj.getId(), obj.getName(), obj.getEmail(), obj.getExpenses()));
     }
 
    @DeleteMapping(value = "/{id}") 
-   public ResponseEntity<Void> delete(@PathVariable Long id){
-	   userService.Delete(id);
+   public ResponseEntity<Void> delete(@PathVariable UserRequest Dto){
+	   userService.Delete(Dto.id());
 	   return ResponseEntity.noContent().build();
    }
 
