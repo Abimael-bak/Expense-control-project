@@ -2,7 +2,6 @@ package com.Gastos.controll.resource;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,8 @@ public class UserResource {
 	private UserRepository userRepository;
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<UserResponse> findById(@PathVariable UserRequest Dto){
-		User user = userService.findById(Dto.id());
+	public ResponseEntity<UserResponse> findById(@PathVariable Long id){
+		User user = userService.findById(id);
 		
 		return ResponseEntity.ok().body(new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getExpenses()));
 	}
@@ -51,7 +50,7 @@ public class UserResource {
 		User user = new User();
 		user.setName(Dto.name());
 		user.setEmail(Dto.email());
-		user.setPassword(Dto.Password());
+		user.setPassword(Dto.password());
 		
 		var obj = userService.insert(user);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -61,8 +60,8 @@ public class UserResource {
 	}
 	
 	@GetMapping("/{id}/expenses")
-	public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable UserRequest Dto) {
-	    Optional<User> user = userRepository.findById(Dto.id());
+	public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable Long id) {
+	    Optional<User> user = userRepository.findById(id);
 	    if (!user.isPresent()) {
 	        return ResponseEntity.notFound().build();
 	    }
@@ -80,7 +79,7 @@ public class UserResource {
 	@PostMapping(value = "/login")
 	public ResponseEntity<UserResponse> login(@RequestBody UserRequest Dto){
 		String email = Dto.email();
-		String password = Dto.Password();
+		String password = Dto.password();
 		
 		User user = userService.login(email, password);
 		
@@ -93,7 +92,7 @@ public class UserResource {
     	User user = new User();
     			user.setName(Dto.name());
     			user.setEmail(Dto.email());
-    			user.setPassword(Dto.Password());
+    			user.setPassword(Dto.password());
     			
     		var obj = userService.update(id, user );
     		
@@ -101,8 +100,8 @@ public class UserResource {
     }
 
    @DeleteMapping(value = "/{id}") 
-   public ResponseEntity<Void> delete(@PathVariable UserRequest Dto){
-	   userService.Delete(Dto.id());
+   public ResponseEntity<Void> delete(@PathVariable Long id){
+	   userService.Delete(id);
 	   return ResponseEntity.noContent().build();
    }
 

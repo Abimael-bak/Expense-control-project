@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.Gastos.controll.entities.Expense;
+import com.Gastos.controll.entities.DTO.ExpenseRequest;
+import com.Gastos.controll.entities.DTO.ExpenseResponse;
 import com.Gastos.controll.service.ExpenseService;
 
 
@@ -36,23 +38,41 @@ public class ExpenseResource {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Expense> findById(@PathVariable Long id){
-		Expense expense = expenseService.findById(id);
-		return ResponseEntity.ok().body(expense);
+	public ResponseEntity<ExpenseResponse> findById(@PathVariable Long id){
+		var ex = expenseService.findById(id);
+		
+		return ResponseEntity.ok().body(new ExpenseResponse(ex.getId(), ex.getDescription(), ex.getAmount(), ex.getMoment(), ex.getCategory()));
 	}
 	
 	@PostMapping
-	public ResponseEntity<Expense> insert(@RequestBody Expense obj){
-		 Expense expense = expenseService.insert(obj);
-			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-		 return ResponseEntity.created(uri).body(expense);
+	public ResponseEntity<ExpenseResponse> insert(@RequestBody ExpenseRequest Dto){
+		 Expense ex = new Expense();
+		 
+		 ex.setDescription(Dto.description());
+		 ex.setAmount(Dto.amount());
+		 ex.setMoment(Dto.moment());
+		 ex.setCategory(Dto.category());
+		 
+		 expenseService.insert(ex);
+		 
+			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(ex.getId()).toUri();
+		 return ResponseEntity.created(uri).body(new ExpenseResponse(ex.getId(), ex.getDescription(), ex.getAmount(), ex.getMoment(), ex.getCategory()));
 		
 	}
 	
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Expense> update(@RequestBody Expense obj, @PathVariable Long id){
-    	Expense expense = expenseService.update(obj, id);
-    	return ResponseEntity.ok().body(expense);
+    public ResponseEntity<ExpenseResponse> update(@RequestBody ExpenseRequest Dto, @PathVariable Long id){
+    	
+    	var ex = new Expense();
+    	
+    	 ex.setDescription(Dto.description()); 
+		 ex.setAmount(Dto.amount());
+		 ex.setMoment(Dto.moment());
+		 ex.setCategory(Dto.category());
+		 
+    	
+    	var newEx = expenseService.update(ex, id);
+    	return ResponseEntity.ok().body(new ExpenseResponse(newEx.getId(), newEx.getDescription(), newEx.getAmount(), newEx.getMoment(), newEx.getCategory());
     }
     
     @DeleteMapping(value = "/{id}")
