@@ -20,6 +20,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.Gastos.controll.entities.Expense;
 import com.Gastos.controll.entities.User;
+import com.Gastos.controll.entities.DTO.UserRequest;
+import com.Gastos.controll.entities.DTO.UserResponse;
 import com.Gastos.controll.repository.UserRepository;
 import com.Gastos.controll.service.UserService;
 
@@ -38,9 +40,10 @@ public class UserResource {
 	private UserRepository userRepository;
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<User> findById(@PathVariable Long id){
-		User user = userService.findById(id);
-		return ResponseEntity.ok().body(user);
+	public ResponseEntity<UserResponse> findById(@PathVariable UserRequest Dto){
+		User user = userService.findById(Dto.id());
+		
+		return ResponseEntity.ok().body(new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getExpenses()));
 	}
 	
 	@PostMapping

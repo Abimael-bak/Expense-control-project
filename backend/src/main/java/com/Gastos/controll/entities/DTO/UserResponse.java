@@ -1,7 +1,9 @@
 package com.Gastos.controll.entities.DTO;
 
-import java.util.UUID;
+import java.util.List;
 
-public record UserResponse(UUID id, String name, String email) {
+import com.Gastos.controll.entities.Expense;
+
+public record UserResponse(Long id, String name, String email, List<Expense> expenses) {
 
 }
