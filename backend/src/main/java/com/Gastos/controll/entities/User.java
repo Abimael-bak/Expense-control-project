@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
@@ -101,5 +103,9 @@ public class User implements Serializable {
 	}
 
 	
+	public boolean testPassword(String password, PasswordEncoder passwordEncoder) {
+		
+		return passwordEncoder.matches(password, this.password);
+	}
 	
 }

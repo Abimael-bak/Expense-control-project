@@ -1,6 +1,8 @@
 package com.Gastos.controll.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.Gastos.controll.entities.User;
@@ -14,6 +16,17 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
+	
+	
+   public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+		super();
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
    public User findById(Long id) {
 	   return userRepository.findById(id)
 			   .orElseThrow(()-> new ResourceNotFoundException("Resource not found. id"+ id));
@@ -24,6 +37,7 @@ public class UserService {
 	  if(userRepository.findByEmail(obj.getEmail()).isPresent()) {
 		throw new UserException("Email já está em uso!");
 	  }
+	  
 	return userRepository.save(obj);
 	   
    }
@@ -33,7 +47,7 @@ public class UserService {
 	User user = userRepository.findByEmail(email)
 			.orElseThrow(()-> new UserException("Email não cadastrado!"));
 	
-	if(!password.equals(user.getPassword())) {
+	if(!user.testPassword(password, passwordEncoder)) {
 		 throw new UserException("Senha incorreta!");
 	}
 	return user;

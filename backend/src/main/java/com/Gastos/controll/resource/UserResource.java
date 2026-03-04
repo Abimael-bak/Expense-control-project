@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,18 @@ public class UserResource {
 	
 	private UserRepository userRepository;
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
+	
+	
+	
+	public UserResource(UserService userService, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+		this.userService = userService;
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<UserResponse> findById(@PathVariable Long id){
 		User user = userService.findById(id);
@@ -50,7 +63,7 @@ public class UserResource {
 		User user = new User();
 		user.setName(Dto.name());
 		user.setEmail(Dto.email());
-		user.setPassword(Dto.password());
+		user.setPassword(passwordEncoder.encode(Dto.password()));
 		
 		var obj = userService.insert(user);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
