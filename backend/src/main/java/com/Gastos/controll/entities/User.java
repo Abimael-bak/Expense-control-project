@@ -4,16 +4,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import intro.security.springSecurity.entities.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -36,16 +42,26 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Expense> expenses = new ArrayList<>();
 	  
+	@ManyToMany( fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "tb_users_roles",
+			joinColumns = @JoinColumn(name ="user_id"),
+			inverseJoinColumns = @JoinColumn(name ="role_id")
+			)
+	
+	private Set<Role> roles;
+	
 
 	public User() {
 		
 	}
 	
-	public User(Long id, String name, String email, String password) {
+	public User(Long id, String name, String email, String password, Set<Role> roles) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
+		this.roles = roles;
 	}
 
 	public Long getId() {
@@ -84,6 +100,15 @@ public class User implements Serializable {
 	public List<Expense> getExpenses() {
 		return expenses;
 	}
+	
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+	
 
 	@Override
 	public int hashCode() {
