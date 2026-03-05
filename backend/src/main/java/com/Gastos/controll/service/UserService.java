@@ -50,7 +50,7 @@ public class UserService {
 	if(!user.testPassword(password, passwordEncoder)) {
 		 throw new UserException("Senha incorreta!");
 	}
-	return user;
+	return user; 
   }
   
   public User update(Long id, User obj) {

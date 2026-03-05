@@ -58,7 +58,7 @@ public class UserResource {
 		return ResponseEntity.ok().body(new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getExpenses()));
 	}
 	
-	@PostMapping
+	@PostMapping("/cadastro")
 	public ResponseEntity<Void> insert(@RequestBody  UserRequest Dto){
 		User user = new User();
 		user.setName(Dto.name());
