@@ -1,11 +1,14 @@
 package com.Gastos.controll.service;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.Gastos.controll.entities.Role;
 import com.Gastos.controll.entities.User;
+import com.Gastos.controll.repository.RoleRepository;
 import com.Gastos.controll.repository.UserRepository;
 import com.Gastos.controll.service.Exception.ResourceNotFoundException;
 import com.Gastos.controll.service.Exception.UserException;
@@ -19,10 +22,14 @@ public class UserService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
+	@Autowired
+	
+	RoleRepository roleRepository;
 	
 	
-   public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-		super();
+   public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
+		   RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -38,6 +45,14 @@ public class UserService {
 		throw new UserException("Email já está em uso!");
 	  }
 	  
+	  if (roleRepository.findByName(Role.Values.BASIC.name()) == null) {
+	        var newRole = new Role(null, Role.Values.BASIC.name());
+	         roleRepository.save(newRole);
+	    }
+
+       var basicRole = roleRepository.findByName(Role.Values.BASIC.name());
+       
+       obj.setRoles(Set.of(basicRole));
 	return userRepository.save(obj);
 	   
    }

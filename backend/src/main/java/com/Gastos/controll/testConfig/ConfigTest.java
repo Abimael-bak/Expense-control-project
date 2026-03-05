@@ -36,7 +36,7 @@ public class ConfigTest implements CommandLineRunner  {
 	Category ct3 = new Category(null, "Trip");
 	
 	categoryRepository.saveAll(Arrays.asList(ct1,ct2,ct3));
-	
+/*	
 	User u1= new User(null,"Abimael de jesus abreu", "abimaelabreu73@","bima0000");
 	User u2= new User(null,"Eduardo oliveira mota", "eduardooliveira32@","edu0000");
 	User u3= new User(null,"Isaque levi", "isaaquelevi90@","levi0000");
@@ -48,7 +48,7 @@ public class ConfigTest implements CommandLineRunner  {
 	Expense ex3 = new Expense(null,"Guarda roupa",2300.00,Instant.parse("2024-11-13T14:19:17Z"),ct2,u3);
 	
 	expenseRepository.saveAll(Arrays.asList(ex1,ex2,ex3));
-
+*/
 	}
 
 }

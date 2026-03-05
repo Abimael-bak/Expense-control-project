@@ -42,24 +42,26 @@ public class Role implements Serializable{
 		this.name = name;
 	}
 	
-	public enum Values {
+	public enum  Values {
+	    
+
+		 BASIC(1L),
+		 ADMIN(2L);
 		
-		ADMIN(1L),
-		BASIC(2L);
+		long roleId;
 		
-		long id;
-		
-		Values() {
-		}
-		
-		private Values(long id) {
-			this.id = id;
+		Values(long roleId){
+			this.roleId = roleId;
 		}
 
-
-		public long getId() {
-			return id;
+		public long getRoleId() {
+			return roleId;
 		}
+
+		public void setRoleId(long roleId) {
+			this.roleId = roleId;
+		}
+		
 		
 	}
 }
