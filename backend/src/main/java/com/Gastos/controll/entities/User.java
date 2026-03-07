@@ -10,8 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.Gastos.controll.entities.Role;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -48,7 +48,6 @@ public class User implements Serializable {
 			joinColumns = @JoinColumn(name ="user_id"),
 			inverseJoinColumns = @JoinColumn(name ="role_id")
 			)
-	
 	private Set<Role> roles;
 	
 

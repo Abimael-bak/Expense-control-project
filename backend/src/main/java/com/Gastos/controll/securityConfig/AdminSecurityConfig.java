@@ -57,8 +57,10 @@ public class AdminSecurityConfig implements CommandLineRunner{
 		    	 User admin = new User();
 		    	 admin.setName("Admin");
 		    	 admin.setEmail(email);
-		    	 admin.setPassword(password);
+		    	 admin.setPassword(passwordEncoder.encode(password));
 		    	 admin.setRoles(Set.of(roleAdmin));
+		    	 
+		    	 userRepository.save(admin);
 	        }
 			else{
 			  System.out.println("Ja existe!");
