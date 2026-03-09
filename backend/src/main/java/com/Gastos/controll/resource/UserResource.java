@@ -1,8 +1,8 @@
 package com.Gastos.controll.resource;
 
 import java.net.URI;
-import java.net.URLPermission;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,6 +72,22 @@ public class UserResource {
 		
 		return ResponseEntity.ok().body(new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getExpenses()));
 	}
+	
+
+	@GetMapping
+	 @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+	public ResponseEntity<List<UserResponse>>findAll(){
+		var users = userService.findAll();
+		
+		List<UserResponse> responses = new ArrayList<>();
+		for(var user: users) {
+			var response = new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getExpenses());
+			responses.add(response);
+		}
+		
+		return ResponseEntity.ok().body(responses);
+	}
+	
 	
 	@PostMapping("/cadastro")
 	public ResponseEntity<Void> insert(@RequestBody  UserRequest Dto){
