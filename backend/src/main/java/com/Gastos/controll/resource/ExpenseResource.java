@@ -33,7 +33,6 @@ public class ExpenseResource {
 	private ExpenseService expenseService;
 	
 	@GetMapping
-	@PreAuthorize("hasRole ('ADMIN')")
 	public ResponseEntity<List<Expense>> findAll(){
 		List<Expense> expenses = expenseService.findAll();
 		return ResponseEntity.ok().body(expenses);

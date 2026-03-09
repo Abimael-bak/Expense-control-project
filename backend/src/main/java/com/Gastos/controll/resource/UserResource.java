@@ -1,6 +1,7 @@
 package com.Gastos.controll.resource;
 
 import java.net.URI;
+import java.net.URLPermission;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -64,8 +65,8 @@ public class UserResource {
 		this.jwtEncoder = jwtEncoder;
 	}
 
-	@PreAuthorize("hasRole ('ADMIN')")
 	@GetMapping(value = "/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
 	public ResponseEntity<UserResponse> findById(@PathVariable Long id){
 		User user = userService.findById(id);
 		
@@ -146,8 +147,9 @@ public class UserResource {
     	return ResponseEntity.ok().body(new UserResponse(obj.getId(), obj.getName(), obj.getEmail(), obj.getExpenses()));
     }
 
-	@PreAuthorize("hasRole ('ADMIN')")
+
    @DeleteMapping(value = "/{id}") 
+   @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
    public ResponseEntity<Void> delete(@PathVariable Long id){
 	   userService.Delete(id);
 	   return ResponseEntity.noContent().build();
