@@ -1,11 +1,33 @@
-const API_URL = "https://expense-control-project.onrender.com/expenses";
-
+const API_URL = "http://localhost:8080";
 let expenseIdToUpdate = null;
 
 // ----------------------
-//  CARREGAMENTO INICIAL
+// TOKEN E USER
 // ----------------------
+
+function getToken() {
+    return localStorage.getItem("token");
+}
+
+function getUserId() {
+
+    const token = getToken();
+
+    if (!token) return null;
+
+    if (typeof jwt_decode === "undefined") return null;
+
+    const decoded = jwt_decode(token);
+
+    return decoded.sub;
+}
+
+// ----------------------
+// CARREGAMENTO INICIAL
+// ----------------------
+
 document.addEventListener("DOMContentLoaded", () => {
+
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
 
@@ -13,60 +35,70 @@ document.addEventListener("DOMContentLoaded", () => {
         loadExpenseById(id);
     }
 
-    // Só executa na página principal
     if (document.getElementById("expense-list")) {
         renderUser();
     }
+
 });
 
 // ----------------------
-//  FUNÇÃO CENTRALIZADA
-//  BUSCA TODAS AS DESPESAS DO USUÁRIO
+// BUSCA DESPESAS DO USUÁRIO
 // ----------------------
-function loadUserExpenses() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return;
 
-    fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
-        .then(response => response.json())
-        .then(expenses => {
-            renderExpense(expenses);
-        })
+function loadUserExpenses() {
+
+    const token = getToken();
+    const userId = getUserId();
+
+    if (!token || !userId) return;
+
+    fetch(`${API_URL}/users/expenses`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then(res => res.json())
+        .then(renderExpense)
         .catch(error => console.error("Erro ao carregar despesas:", error));
 }
 
+// ----------------------
+// RENDER USER
+// ----------------------
 
-// ----------------------
-//  CARREGA O USUÁRIO E AS DESPESAS
-// ----------------------
 function renderUser() {
-    const user = JSON.parse(localStorage.getItem("user"));
 
-    if (!user) {
+    const token = getToken();
+
+    if (!token) {
         window.location.href = "login.html";
         return;
     }
 
-    // Agora sempre busca do backend
     loadUserExpenses();
 }
 
 // ----------------------
-//  RENDERIZAÇÂO DA TABELA
+// RENDER TABELA
 // ----------------------
+
 function renderExpense(expenses) {
+
     const tableBody = document.getElementById("expense-list");
     const totalSpan = document.getElementById("total");
 
     if (!tableBody || !totalSpan) return;
 
     tableBody.innerHTML = "";
+
     let total = 0;
 
     expenses.forEach(e => {
+
         const date = e.moment.split("T")[0];
 
         const tr = document.createElement("tr");
+
         tr.innerHTML = `
             <td>${e.id}</td>
             <td>${e.description}</td>
@@ -78,176 +110,240 @@ function renderExpense(expenses) {
                 <button onclick="Delete(${e.id})">Deletar</button>
             </td>
         `;
+
         tableBody.appendChild(tr);
 
         total += e.amount;
+
     });
 
     totalSpan.textContent = total.toFixed(2);
 }
 
 // ----------------------
-//  CARREGA UMA DESPESA PARA EDIÇÃO
+// CARREGAR DESPESA POR ID
 // ----------------------
+
 function loadExpenseById(id) {
-    fetch(`${API_URL}/${id}`)
-        .then(response => response.json())
+
+    const token = getToken();
+
+    fetch(`${API_URL}/expenses/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then(res => res.json())
         .then(data => {
+
             document.getElementById("description").value = data.description;
             document.getElementById("amount").value = data.amount;
             document.getElementById("category").value = data.category.name;
 
             expenseIdToUpdate = id;
+
         })
         .catch(error => console.error("Erro carregando despesa:", error));
 }
 
 // ----------------------
-//  REDIRECIONA PARA PÁGINA DE ATUALIZAÇÃO
+// REDIRECIONA PARA UPDATE
 // ----------------------
+
 function Update(id) {
     window.location.href = `insert.html?id=${id}`;
 }
 
 // ----------------------
-//  INSERIR OU ATUALIZAR DESPESA
+// CRIAR OU ATUALIZAR DESPESA
 // ----------------------
+
 function addExpense() {
+
     const description = sanitize(document.getElementById("description").value.trim());
     const amount = document.getElementById("amount").value;
     const category = sanitize(document.getElementById("category").value.trim());
-    const user = JSON.parse(localStorage.getItem("user"));
+
+    const token = getToken();
 
     if (!description || !amount || !category) {
-        alert("Por favor, preencha todos os campos.");
+        alert("Preencha todos os campos.");
         return;
     }
 
     const method = expenseIdToUpdate ? "PUT" : "POST";
-    const url = expenseIdToUpdate ? `${API_URL}/${expenseIdToUpdate}` : API_URL;
+
+    const url = expenseIdToUpdate
+        ? `${API_URL}/expenses/${expenseIdToUpdate}/update`
+        : `${API_URL}/expenses`;
 
     const expense = {
-        description: description,
+        description,
         amount: Number(amount),
         moment: new Date().toISOString(),
-        category: { name: category },
-        user: { name: user.name }   // corrigido!
+        category: { name: category }
+        
     };
 
     fetch(url, {
         method: method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(expense)
     })
-        .then(response => {
-            if (!response.ok) throw new Error("Erro ao salvar despesa.");
-            return response.json();
+        .then(res => {
+
+            if (!res.ok) {
+                throw new Error("Erro ao salvar despesa.");
+            }
+            return res.json();
+
         })
         .then(() => {
+
             loadUserExpenses();
             clearForm();
 
             window.location.href = "index.html";
-            expenseIdToUpdate = null;
+
         })
         .catch(error => {
-            alert("Erro ao salvar despesa: " + error.message);
+
+            alert("Erro ao salvar despesa.");
             console.error(error);
+
         });
 }
 
 // ----------------------
-//  DELETAR DESPESA
+// DELETAR DESPESA
 // ----------------------
+
 function Delete(id) {
-    fetch(`${API_URL}/${id}`, { method: "DELETE" })
-        .then(response => {
-            if (!response.ok) throw new Error("Erro ao deletar despesa.");
+
+    const token = getToken();
+
+    fetch(`${API_URL}/expenses/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then(res => {
+
+            if (!res.ok) {
+                throw new Error("Erro ao deletar.");
+            }
+
         })
         .then(loadUserExpenses)
-        .catch(error => alert("Erro ao deletar despesa: " + error.message));
+        .catch(error => alert("Erro ao deletar despesa."));
 }
 
 // ----------------------
-//  BUSCA
+// BUSCA
 // ----------------------
+
 function searchExpenses() {
-    const inputValue = (document.getElementById("search-input").value.toLowerCase().trim());
-    const user = JSON.parse(localStorage.getItem("user"));
+
+    const inputValue = document
+        .getElementById("search-input")
+        .value
+        .toLowerCase()
+        .trim();
 
     if (!inputValue) {
         loadUserExpenses();
         return;
     }
 
-    // ---- Busca por valor (>100)
-    if (inputValue.startsWith(">")) {
-        const amount = inputValue.substring(1).trim();
+    const token = getToken();
 
-        fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
-            .then(response => response.json())
-            .then(data => {
-                const filtered = data.filter(e => e.amount > Number(amount));
-                renderExpense(filtered);
-            });
-        return;
-    }
-
-    // ---- Busca por categoria (category/2)
-    if (/^category\/\d+$/.test(inputValue)) {
-        const categoryId = inputValue.split("/")[1];
-
-        fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
-            .then(response => response.json())
-            .then(data => {
-                const filtered = data.filter(e => e.category.id === Number(categoryId));
-                renderExpense(filtered);
-            });
-        return;
-    }
-
-    // ---- Busca por ID
-    if (!isNaN(inputValue)) {
-        fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(e => {
-                    if (e.id === Number(inputValue)) {
-                        renderExpense([e]);
-                    }
-            });
-        });
-        return;
-    }
-
-    // ---- Busca geral
-    fetch(`https://expense-control-project.onrender.com/users/${user.id}/expenses`)
-        .then(response => response.json())
+    fetch(`${API_URL}/users/expenses`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then(res => res.json())
         .then(data => {
-            const filtered = data.filter(e =>
-                (e.description.toLowerCase().includes(inputValue) ||
-                    e.category.name.toLowerCase().includes(inputValue))
-            );
+
+            let filtered = [];
+
+            if (inputValue.startsWith(">")) {
+
+                const amount = inputValue.substring(1).trim();
+
+                filtered = data.filter(e => e.amount > Number(amount));
+
+            } else if (/^category\/\d+$/.test(inputValue)) {
+
+                const categoryId = inputValue.split("/")[1];
+
+                filtered = data.filter(e => e.category.id === Number(categoryId));
+
+            } else if (!isNaN(inputValue)) {
+
+                filtered = data.filter(e => e.id === Number(inputValue));
+
+            } else {
+
+                filtered = data.filter(e =>
+                    e.description.toLowerCase().includes(inputValue) ||
+                    e.category.name.toLowerCase().includes(inputValue)
+                );
+
+            }
+
             renderExpense(filtered);
+
         });
 }
 
 // ----------------------
-//  LIMPAR FORMULÁRIO
+// LIMPAR FORMULÁRIO
 // ----------------------
+
 function clearForm() {
+
     document.getElementById("description").value = "";
     document.getElementById("amount").value = "";
     document.getElementById("category").value = "";
+
 }
+
+// ----------------------
+// SANITIZE
+// ----------------------
 
 function sanitize(input) {
+
     const div = document.createElement("div");
     div.textContent = input;
+
     return div.innerHTML;
+
 }
 
+// ----------------------
+// LOGOUT
+// ----------------------
+
 function logout() {
-    localStorage.removeItem("user");
-    window.location.replace("login.html"); 
+
+    localStorage.removeItem("token");
+
+    window.location.replace("login.html");
+
 }
+
+// ----------------------
+// EXPORT GLOBAL
+// ----------------------
+
+window.addExpense = addExpense;
+window.Delete = Delete;
+window.Update = Update;
+window.searchExpenses = searchExpenses;
+window.logout = logout;

@@ -9,7 +9,7 @@
 <body>
     <script>
     // Impede voltar após logout ou sem login
-    if (!localStorage.getItem("user")) {
+    if (!localStorage.getItem("token")) {
         window.location.replace("login.html");
     }
 
@@ -41,7 +41,7 @@
             </a>
         </section>
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

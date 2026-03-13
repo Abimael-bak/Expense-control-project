@@ -1,5 +1,5 @@
 
-const API_URL = "https://expense-control-project.onrender.com/users";
+const API_URL = "http://localhost:8080/users";
 
 function login() {
     const inputEmail = sanitize(document.getElementById("email").value.trim());
@@ -26,8 +26,8 @@ function login() {
         }
         return response.json();
     })
-    .then(user => {
-        localStorage.setItem("user", JSON.stringify(user));
+    .then(token => {
+        localStorage.setItem("token", token.accesseToken);;
         window.location.href = "index.html";
     })
     .catch(error => {
@@ -75,7 +75,7 @@ function cadastro() {
         password: inputPassword
     };
 
-    fetch(`${API_URL}`, {
+    fetch(`${API_URL}/cadastro`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
