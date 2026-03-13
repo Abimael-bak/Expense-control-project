@@ -1,6 +1,8 @@
 const API_URL = "http://localhost:8080";
 let expenseIdToUpdate = null;
 
+let expenseIdMap = {}; // MAPA: id visual -> id real
+
 // ----------------------
 // TOKEN E USER
 // ----------------------
@@ -82,38 +84,49 @@ function renderUser() {
 // RENDER TABELA
 // ----------------------
 
-function renderExpense(expenses) {
+function renderExpense(expenses, inputValue) {
 
     const tableBody = document.getElementById("expense-list");
     const totalSpan = document.getElementById("total");
+    let visualId ;
 
     if (!tableBody || !totalSpan) return;
 
     tableBody.innerHTML = "";
 
     let total = 0;
+    if(inputValue){
+       visualId = Number(inputValue)
+    }else{
+     visualId = 1;
+    }
+    expenseIdMap = {}; // limpa o mapa
 
     expenses.forEach(e => {
 
         const date = e.moment.split("T")[0];
 
+        // salva no MAP
+        expenseIdMap[visualId] = e.id;
+
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-            <td>${e.id}</td>
+            <td>${visualId}</td>
             <td>${e.description}</td>
             <td>${e.amount.toFixed(2)}</td>
             <td>${e.category.name}</td>
             <td>${date}</td>
             <td>
-                <button onclick="Update(${e.id})">Atualizar</button>
-                <button onclick="Delete(${e.id})">Deletar</button>
+                <button onclick="Update(${visualId})">Atualizar</button>
+                <button onclick="Delete(${visualId})">Deletar</button>
             </td>
         `;
 
         tableBody.appendChild(tr);
 
         total += e.amount;
+        visualId++;
 
     });
 
@@ -150,8 +163,11 @@ function loadExpenseById(id) {
 // REDIRECIONA PARA UPDATE
 // ----------------------
 
-function Update(id) {
-    window.location.href = `insert.html?id=${id}`;
+function Update(visualId) {
+
+    const realId = expenseIdMap[visualId];
+
+    window.location.href = `insert.html?id=${realId}`;
 }
 
 // ----------------------
@@ -182,7 +198,6 @@ function addExpense() {
         amount: Number(amount),
         moment: new Date().toISOString(),
         category: { name: category }
-        
     };
 
     fetch(url, {
@@ -198,6 +213,7 @@ function addExpense() {
             if (!res.ok) {
                 throw new Error("Erro ao salvar despesa.");
             }
+
             return res.json();
 
         })
@@ -221,11 +237,12 @@ function addExpense() {
 // DELETAR DESPESA
 // ----------------------
 
-function Delete(id) {
+function Delete(visualId) {
 
     const token = getToken();
+    const realId = expenseIdMap[visualId];
 
-    fetch(`${API_URL}/expenses/${id}`, {
+    fetch(`${API_URL}/expenses/${realId}`, {
         method: "DELETE",
         headers: {
             Authorization: `Bearer ${token}`
@@ -285,7 +302,10 @@ function searchExpenses() {
 
             } else if (!isNaN(inputValue)) {
 
-                filtered = data.filter(e => e.id === Number(inputValue));
+                // busca pelo ID VISUAL
+                const realId = expenseIdMap[Number(inputValue)];
+
+                filtered = data.filter(e => e.id === realId);
 
             } else {
 
@@ -296,7 +316,7 @@ function searchExpenses() {
 
             }
 
-            renderExpense(filtered);
+            renderExpense(filtered, inputValue);
 
         });
 }

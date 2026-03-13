@@ -86,7 +86,6 @@ function cadastro() {
         if (!response.ok) {
             throw new Error("Erro ao cadastrar usuário");
         }
-        return response.json();
     })
     .then(() => {
         alert("Usuário cadastrado com sucesso!");
