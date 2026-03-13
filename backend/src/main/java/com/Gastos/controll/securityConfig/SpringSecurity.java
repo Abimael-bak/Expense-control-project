@@ -8,6 +8,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +47,8 @@ public class SpringSecurity {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/users/login").permitAll()
             .requestMatchers("/users/cadastro").permitAll()
-            .anyRequest().authenticated())
+            .anyRequest().authenticated()) 
+        .cors(Customizer.withDefaults())
         .csrf(csrf -> csrf.disable())
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
         .sessionManagement(session -> 
@@ -115,6 +117,21 @@ public class SpringSecurity {
     @Bean
     public JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    }
+    
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+
+        var config = new org.springframework.web.cors.CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://127.0.0.1:5500"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+
+        var source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 
 }

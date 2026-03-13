@@ -4,13 +4,15 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -34,7 +36,7 @@ import com.Gastos.controll.repository.UserRepository;
 import com.Gastos.controll.service.UserService;
 
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
 @RequestMapping(value = "/users")
 public class UserResource {
@@ -103,20 +105,21 @@ public class UserResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@GetMapping("/{id}/expenses")
-	public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable Long id) {
-	    Optional<User> user = userRepository.findById(id);
-	    if (!user.isPresent()) {
-	        return ResponseEntity.notFound().build();
-	    }
+	@GetMapping("/expenses")
+	public ResponseEntity<List<Expense>> getExpensesByUser(@AuthenticationPrincipal Jwt jwt){
+		
+		 
+		 Long userId = Long.valueOf(jwt.getSubject());
+		 
+		 User user = userRepository.findById(userId)
+		            .orElseThrow();
 	     
 	    UserResponse DTO = new UserResponse(
-	    		user.get().getId(),
-	    		user.get().getName(),
-	    		user.get().getEmail(),
-	    		user.get().getExpenses()
+	    		user.getId(),
+	    		user.getName(),
+	    		user.getEmail(),
+	    		user.getExpenses()
 	    		);
-	     
 	    return ResponseEntity.ok(DTO.expenses());
 	}
  

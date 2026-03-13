@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,18 +21,23 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.Gastos.controll.entities.Expense;
+import com.Gastos.controll.entities.User;
 import com.Gastos.controll.entities.DTO.ExpenseRequest;
 import com.Gastos.controll.entities.DTO.ExpenseResponse;
+import com.Gastos.controll.repository.UserRepository;
 import com.Gastos.controll.service.ExpenseService;
 
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
 @RequestMapping(value = "expenses")
 public class ExpenseResource {
  
 	@Autowired
 	private ExpenseService expenseService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping
 	public ResponseEntity<List<Expense>> findAll(){
@@ -46,14 +53,22 @@ public class ExpenseResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ExpenseResponse> insert(@RequestBody ExpenseRequest Dto){
+	public ResponseEntity<ExpenseResponse> insert(@RequestBody ExpenseRequest Dto, @AuthenticationPrincipal Jwt jwt){
+		
+		 
+		 Long userId = Long.valueOf(jwt.getSubject());
+		 
+		 User user = userRepository.findById(userId)
+		            .orElseThrow();
+		 
 		 Expense ex = new Expense();
 		 
 		 ex.setDescription(Dto.description());
 		 ex.setAmount(Dto.amount());
 		 ex.setMoment(Dto.moment());
 		 ex.setCategory(Dto.category());
-		 
+		 ex.setUser(user);
+		
 		 expenseService.insert(ex);
 		 
 			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(ex.getId()).toUri();
@@ -61,7 +76,7 @@ public class ExpenseResource {
 		
 	}
 	
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/{id}/update")
     public ResponseEntity<ExpenseResponse> update(@RequestBody ExpenseRequest Dto, @PathVariable Long id){
     	
     	var ex = new Expense();

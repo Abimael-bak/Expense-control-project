@@ -127,10 +127,9 @@ public class ExpenseService {
 	                );
 
 	        } else if (obj.getCategory().getName() != null) {
-	            category = categoryRepository.findByName(obj.getCategory().getName())
-	                .orElseThrow(() ->
-	                    new ResourceNotFoundException("Category not found with name: " + obj.getCategory().getName())
-	                );
+                    category = new Category(null, obj.getCategory().getName());
+                       categoryRepository.save(category);
+	                
 	        } else {
 	            throw new RuntimeException("Category inválida");
 	        }
