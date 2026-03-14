@@ -154,7 +154,7 @@ public class UserResource {
 	}
 	
 	
-	@PutMapping(value = "/{id}")
+	@PutMapping(value = "/{id}/update")
     public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody UserRequest Dto){
     	User user = new User();
     			user.setName(Dto.name());
