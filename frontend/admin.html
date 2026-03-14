@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta charset="UTF-8">
+   <title>Painel Admin</title>
+   <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Painel do Administrador</h2>
+
+        <div class="search-box">
+
+            <input
+            id="search-user"
+            placeholder="Buscar usuário por nome ou email"
+            >
+
+            <button onclick="searchUsers()">Buscar</button>
+            <button onclick="loadUsers()">Listar</button>
+             <button onclick="window.location.href='index.html'">Voltar</button>
+        </div>
+
+        <table>
+
+            <thead>
+            <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Ação</th>
+            </tr>
+            </thead>
+
+            <tbody id="user-list"></tbody>
+          
+        </table>
+
+        
+
+    </div>
+ <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+
+</html>
