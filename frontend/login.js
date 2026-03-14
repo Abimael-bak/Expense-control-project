@@ -1,7 +1,12 @@
-
 const API_URL = "http://localhost:8080/users";
 
+
+/* =========================
+   LOGIN
+========================= */
+
 function login() {
+
     const inputEmail = sanitize(document.getElementById("email").value.trim());
     const inputPassword = sanitize(document.getElementById("password").value.trim());
 
@@ -21,49 +26,57 @@ function login() {
         })
     })
     .then(response => {
+
         if (!response.ok) {
             throw new Error("Credenciais inválidas");
         }
+
         return response.json();
     })
     .then(token => {
-        localStorage.setItem("token", token.accesseToken);;
+
+        localStorage.setItem("token", token.accesseToken);
+
+        // redireciona para página principal
         window.location.href = "index.html";
+
     })
     .catch(error => {
+
         console.error("Erro ao fazer login:", error);
         alert("Erro ao fazer login. Tente novamente.");
+
     });
 }
 
+/* =========================
+   CADASTRO
+========================= */
+
 function cadastro() {
+
     const inputName = sanitize(document.getElementById("name").value.trim());
     const inputEmail = sanitize(document.getElementById("Email").value.trim());
     const inputPassword = sanitize(document.getElementById("password").value.trim());
 
-    // Regex de validação
     const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ ]{3,40}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-    // Verifica campos obrigatórios
     if (!inputName || !inputEmail || !inputPassword) {
         alert("Preencha todos os campos.");
         return;
     }
 
-    // Valida o nome
     if (!nameRegex.test(inputName)) {
         alert("Nome inválido! Use apenas letras e entre 3 e 40 caracteres.");
         return;
     }
 
-    // Valida o e-mail
     if (inputEmail.length > 50 || !emailRegex.test(inputEmail)) {
         alert("Email inválido! Verifique o formato e o tamanho máximo (50 caracteres).");
         return;
     }
 
-    // Valida a senha (mínimo 6)
     if (inputPassword.length < 6) {
         alert("A senha deve ter no mínimo 6 caracteres.");
         return;
@@ -83,24 +96,45 @@ function cadastro() {
         body: JSON.stringify(user)
     })
     .then(response => {
+
         if (!response.ok) {
             throw new Error("Erro ao cadastrar usuário");
         }
+
     })
     .then(() => {
+
         alert("Usuário cadastrado com sucesso!");
         window.location.href = "login.html";
+
     })
     .catch(error => {
+
         console.error("Erro ao cadastrar:", error);
         alert("Erro ao cadastrar usuário. Tente novamente.");
+
     });
 }
 
 
+/* =========================
+   SANITIZE
+========================= */
+
 function sanitize(input) {
+
     const div = document.createElement("div");
     div.textContent = input;
     return div.innerHTML;
+
 }
 
+/* =========================
+   EXECUTA AO CARREGAR PÁGINA
+========================= */
+
+window.onload = function(){
+
+    controlarAdmin();
+
+}

@@ -27,6 +27,11 @@ function getUserId() {
 // ----------------------
 // CARREGAMENTO INICIAL
 // ----------------------
+function init(){
+    controlarAdmin();
+}
+
+document.addEventListener("DOMContentLoaded", init);
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -84,6 +89,7 @@ function renderUser() {
 // RENDER TABELA
 // ----------------------
 
+
 function renderExpense(expenses, inputValue) {
 
     const tableBody = document.getElementById("expense-list");
@@ -95,7 +101,7 @@ function renderExpense(expenses, inputValue) {
     tableBody.innerHTML = "";
 
     let total = 0;
-    if(inputValue){
+    if(inputValue && !isNaN(inputValue)){
        visualId = Number(inputValue)
     }else{
      visualId = 1;
@@ -210,9 +216,9 @@ function addExpense() {
     })
         .then(res => {
 
-            if (!res.ok) {
+            if (res.status !== 200 && res.status !== 201) {
                 throw new Error("Erro ao salvar despesa.");
-            }
+}
 
             return res.json();
 
@@ -231,6 +237,37 @@ function addExpense() {
             console.error(error);
 
         });
+}
+
+function getUserScope() {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) return null;
+
+    if (typeof jwt_decode === "undefined") return null;
+
+    const decoded = jwt_decode(token);
+
+    return decoded.scope;
+}
+
+function isAdmin(){
+    return getUserScope() === "ADMIN";
+}
+
+
+function controlarAdmin(){
+
+    const buttonAdmin = document.getElementById("buttonAdmin");
+
+    if(!buttonAdmin) return;
+
+    if(!isAdmin()){
+        buttonAdmin.style.display = "none";
+    }else{
+        buttonAdmin.style.display = "block";
+    }
 }
 
 // ----------------------
