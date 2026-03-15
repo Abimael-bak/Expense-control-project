@@ -36,7 +36,7 @@ import com.Gastos.controll.repository.UserRepository;
 import com.Gastos.controll.service.UserService;
 
 
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+
 @RestController
 @RequestMapping(value = "/users")
 public class UserResource {

@@ -28,7 +28,6 @@ import com.Gastos.controll.repository.UserRepository;
 import com.Gastos.controll.service.ExpenseService;
 
 
-@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
 @RequestMapping(value = "expenses")
 public class ExpenseResource {
