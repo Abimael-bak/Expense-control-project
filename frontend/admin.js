@@ -84,10 +84,10 @@ function renderUsers(users){
 // DELETAR USUÁRIO
 // ----------------------
 
-function deleteUser(){
+function deleteUser(id){
 
     const token = getToken();
-    const userId = getUserId();
+    const userId = id;
     if(!confirm("Deseja realmente deletar esse usuário?")){
         return;
     }
