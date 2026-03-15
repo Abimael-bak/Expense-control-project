@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080";
+const API_URL = "https://expense-control-project.onrender.com";
 let expenseIdToUpdate = null;
 
 let expenseIdMap = {}; // MAPA: id visual -> id real
