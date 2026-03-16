@@ -128,13 +128,3 @@ function sanitize(input) {
     return div.innerHTML;
 
 }
-
-/* =========================
-   EXECUTA AO CARREGAR PÁGINA
-========================= */
-
-window.onload = function(){
-
-    controlarAdmin();
-
-}
