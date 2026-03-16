@@ -71,7 +71,7 @@ public class SpringSecurity {
     @Bean
     public RSAPublicKey rsaPublicKey() throws Exception {
 
-        String key = Files.readString(Paths.get(publicKeyPath))
+        String key = publicKeyPath
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
                 .replaceAll("\\s", "");
@@ -85,7 +85,7 @@ public class SpringSecurity {
     @Bean
     public RSAPrivateKey rsaPrivateKey() throws Exception {
 
-        String key = Files.readString(Paths.get(privateKeyPath))
+        String key = privateKeyPath
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s", "");
@@ -94,8 +94,8 @@ public class SpringSecurity {
 
         return (RSAPrivateKey) KeyFactory.getInstance("RSA")
                 .generatePrivate(new PKCS8EncodedKeySpec(decoded));
+        
     }
-
     /*
      * ===============================
      * JWT

@@ -54,7 +54,7 @@ public class UserResource {
 	
 	
 	@Autowired
-	
+	              
 	private JwtEncoder jwtEncoder;
 	
 	
