@@ -124,7 +124,7 @@ public class SpringSecurity {
 
         var config = new org.springframework.web.cors.CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("https://expense-control.netlify.app"));
+        config.setAllowedOrigins(List.of("https://expensecontroll.netlify.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
