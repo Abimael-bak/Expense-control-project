@@ -18,6 +18,8 @@ import com.Gastos.controll.resource.Exception.DataBaseException;
 import com.Gastos.controll.service.Exception.ResourceNotFoundException;
 import com.Gastos.controll.service.Exception.UserException;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class ExpenseService {
 
@@ -33,6 +35,7 @@ public class ExpenseService {
 		return expenseRepository.findAll() ;
 	}
 
+	@Transactional
     public Expense insert(Expense expense) {
 
         Category category = expense.getCategory();
